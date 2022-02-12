@@ -27,13 +27,14 @@ def exitt():
 
 
 def update(addr):
+    sp = {0: 'map',1: 'sat',2: 'sat,skl'}
     pos = [float(i) for i in geo_search(addr).split(' ')]
     pos[0] += x
     pos[1] += y
     pos = ','.join([str(i) for i in pos])
     response = requests.get(
         f"http://static-maps.yandex.ru/1.x/?ll={pos}"
-        f"&spn={scale},{scale}&l=map")
+        f"&spn={scale},{scale}&l={sp[mapp]}")
     if response:
         with open("map.png", "wb") as f:
             f.write(response.content)
@@ -44,10 +45,10 @@ def update(addr):
 
 
 def main():
-    global scale, x, y
+    global scale, x, y, mapp
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
-    pygame.display.set_caption('Большая задача по Maps API. Часть №3')
+    pygame.display.set_caption('Большая задача по Maps API. Часть №4')
     clock = pygame.time.Clock()
     update(address)
     while True:
@@ -98,6 +99,13 @@ def main():
                     if -180 <= x + scale * 2 <= 180:
                         x += scale * 2
                         ch = True
+                if event.key == pygame.K_q:
+                    print(mapp)
+                    if mapp == 2:
+                        mapp = 0
+                    else:
+                        mapp += 1
+                    ch = True
         if ch:
             update(address)
         pygame.display.flip()
@@ -105,6 +113,10 @@ def main():
 
 if __name__ == "__main__":
     x = y = 0
+    mapp = 0
     address = 'Новосибирск'
     scale = 0.1
     main()
+
+
+# Q - кнопка переключения слоев
