@@ -27,8 +27,12 @@ def exitt():
 
 
 def update(addr):
+    pos = [float(i) for i in geo_search(addr).split(' ')]
+    pos[0] += x
+    pos[1] += y
+    pos = ','.join([str(i) for i in pos])
     response = requests.get(
-        f"http://static-maps.yandex.ru/1.x/?ll={geo_search(addr).replace(' ', ',')}"
+        f"http://static-maps.yandex.ru/1.x/?ll={pos}"
         f"&spn={scale},{scale}&l=map")
     if response:
         with open("map.png", "wb") as f:
@@ -40,10 +44,10 @@ def update(addr):
 
 
 def main():
-    global scale
+    global scale, x, y
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
-    pygame.display.set_caption('Большая задача по Maps API. Часть №2')
+    pygame.display.set_caption('Большая задача по Maps API. Часть №3')
     clock = pygame.time.Clock()
     update(address)
     while True:
@@ -78,12 +82,29 @@ def main():
                     elif scale > 2:
                         scale -= 1
                         ch = True
+                if event.key == pygame.K_UP:
+                    if -90 <= y + scale <= 90:
+                        y += scale
+                        ch = True
+                elif event.key == pygame.K_LEFT:
+                    if -180 <= x - scale * 2 <= 180:
+                        x -= scale * 2
+                        ch = True
+                elif event.key == pygame.K_DOWN:
+                    if -90 <= y - scale <= 90:
+                        y -= scale
+                        ch = True
+                elif event.key == pygame.K_RIGHT:
+                    if -180 <= x + scale * 2 <= 180:
+                        x += scale * 2
+                        ch = True
         if ch:
             update(address)
         pygame.display.flip()
 
 
 if __name__ == "__main__":
+    x = y = 0
     address = 'Новосибирск'
     scale = 0.1
     main()
