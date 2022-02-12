@@ -40,17 +40,46 @@ def update(addr):
 
 
 def main():
+    global scale
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
-    pygame.display.set_caption('Большая задача по Maps API. Часть №1')
+    pygame.display.set_caption('Большая задача по Maps API. Часть №2')
     clock = pygame.time.Clock()
+    update(address)
     while True:
+        ch = False
         clock.tick(33)
-        update(address)
         screen.blit(pygame.image.load("map.png"), (0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exitt()
+            if event.type == pygame.KEYDOWN:
+                # print(scale)
+                if event.key == pygame.K_PAGEUP:
+                    if 2 > scale > 0.3:
+                        scale += 0.1
+                        ch = True
+                    elif scale < 0.3:
+                        scale += 0.01
+                        ch = True
+                    elif 50 > scale > 2:
+                        scale += 1
+                        ch = True
+                elif event.key == pygame.K_PAGEDOWN:
+                    if 0.03 < scale < 0.5:
+                        scale -= 0.01
+                        ch = True
+                    elif 0.03 > scale > 0.01:
+                        scale -= 0.005
+                        ch = True
+                    elif 0.5 < scale < 2:
+                        scale -= 0.05
+                        ch = True
+                    elif scale > 2:
+                        scale -= 1
+                        ch = True
+        if ch:
+            update(address)
         pygame.display.flip()
 
 
